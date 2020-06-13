@@ -15,5 +15,6 @@
     "node-fetch": "^2.6.0",
     "nodemon": "^2.0.4",
     "request": "^2.88.2"
-  }
+  },
+  "proxy": "https://maps.googleapi.com/maps"
 }
