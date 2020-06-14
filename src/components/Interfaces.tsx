@@ -85,8 +85,7 @@ interface DataSources {
   }[];
 }
 
-export default interface HospitalProps Array<{
-  // results: {
+export type HospitalProps = {
   type: string;
   id: string;
   score: number | null;
@@ -100,5 +99,22 @@ export default interface HospitalProps Array<{
   entryPoints: EntryPoints[];
   addressRanges: AddressRanges;
   dataSources: DataSources;
-  // }[];
-}>
+};
+
+// export default interface HospitalProps Array<{
+//   // results: {
+//   type: string;
+//   id: string;
+//   score: number | null;
+//   info: string;
+//   entityType: string;
+//   poi: POI;
+//   address: Address;
+//   position: Position;
+//   mapcodes: Mapcodes[];
+//   viewport: Viewport;
+//   entryPoints: EntryPoints[];
+//   addressRanges: AddressRanges;
+//   dataSources: DataSources;
+//   // }[];
+// }>

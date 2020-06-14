@@ -1,9 +1,9 @@
 import React from "react";
 
 interface Props {
-  searchHospital: (
-    event: React.MouseEvent<HTMLInputElement, MouseEvent>
-  ) => void;
+  searchHospital:
+    | ((event: React.FocusEvent<HTMLInputElement>) => void)
+    | undefined;
   onChange: ((event: React.ChangeEvent<HTMLInputElement>) => void) | undefined;
   radius: string;
 }
@@ -16,7 +16,7 @@ const Search: React.FC<Props> = ({ searchHospital, onChange, radius }) => {
           type="number"
           className="input"
           onChange={onChange}
-          // onInput={searchHospital}
+          onInput={searchHospital}
           value={radius}
           placeholder="Enter your search radius here in metres"
         />
