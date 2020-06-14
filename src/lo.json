@@ -223,3 +223,11 @@
         }]
     }
 }
+
+fuzzyLevel: 1
+numResults: 10
+offset: 0
+query: "hospital"
+queryTime: 8
+queryType: "NON_NEAR"
+totalResults: 10

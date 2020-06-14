@@ -1,24 +1,24 @@
-import React, { useRef } from "react";
+import React from "react";
 
 interface Props {
   searchHospital: (
     event: React.MouseEvent<HTMLInputElement, MouseEvent>
   ) => void;
-  onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  onChange: ((event: React.ChangeEvent<HTMLInputElement>) => void) | undefined;
+  radius: string;
 }
 
-const Search: React.FC<Props> = ({ searchHospital, onChange }) => {
-  const inputRef = useRef<HTMLInputElement>(null);
-
+const Search: React.FC<Props> = ({ searchHospital, onChange, radius }) => {
   return (
     <div className="App">
       <div className="input_details">
         <input
           type="number"
           className="input"
-          onInput={searchHospital}
-          ref={inputRef}
-          placeholder="Enter your geo-location radius here in kilometres"
+          onChange={onChange}
+          // onInput={searchHospital}
+          value={radius}
+          placeholder="Enter your search radius here in metres"
         />
       </div>
     </div>
