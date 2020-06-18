@@ -13,11 +13,4 @@ const config = {
 
 firebase.initializeApp(config);
 
-const database = firebase.database();
-
-
-
-database.ref().set({
-    name: 'Bosipo',
-    age: 22
-});
+export const database = firebase.database();

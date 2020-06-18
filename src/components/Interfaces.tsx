@@ -42,20 +42,20 @@ export type HospitalProps = {
   status: string;
 };
 
-// export default interface HospitalProps Array<{
-//   // results: {
-//   type: string;
-//   id: string;
-//   score: number | null;
-//   info: string;
-//   entityType: string;
-//   poi: POI;
-//   address: Address;
-//   position: Position;
-//   mapcodes: Mapcodes[];
-//   viewport: Viewport;
-//   entryPoints: EntryPoints[];
-//   addressRanges: AddressRanges;
-//   dataSources: DataSources;
-//   // }[];
-// }>
+export type HistoryProps = {
+  id: string;
+  type: string;
+  radius: string | number;
+  results: {
+    geometry: { Location: object; ViewPort?: object };
+    icon: string;
+    id: string;
+    name: string;
+    opening_hours: OpenNow;
+    photos: Photos[];
+    place_id: string;
+    reference: string;
+    types: string[];
+    vicinity: string;
+  }[];
+};

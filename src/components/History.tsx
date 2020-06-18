@@ -1,14 +1,12 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Button from "@material-ui/core/Button";
+// import Button from "@material-ui/core/Button";
+import RoomIcon from "@material-ui/icons/Room";
+import { HistoryProps } from "./Interfaces";
 
 interface Props {
-  //   searchHospital: (radius: number) => void;
-  //   onChangeRadius:
-  //     | ((event: React.ChangeEvent<HTMLInputElement>) => void)
-  //     | undefined;
-  //   radius: number;
-  //   onChangeType: (e: any) => void;
+  history: HistoryProps[];
+  renderHistory: (id: string) => void;
 }
 
 const useStyles = makeStyles({
@@ -60,7 +58,7 @@ const useStyles = makeStyles({
     display: "flex",
     flexDirection: "column",
     width: "80%",
-    border: "1px solid black",
+    boxShadow: "0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)",
     margin: "0 auto",
     marginTop: "40px",
     marginBottom: "40px",
@@ -70,16 +68,64 @@ const useStyles = makeStyles({
     alignSelf: "center",
     margin: "24px 20px",
   },
+  box: {
+    // height: "20px",
+    width: "75%",
+    border: "1px solid black",
+    margin: "15px 46px",
+  },
+  icon: {
+    color: "orange",
+    fontSize: "20px",
+    paddingTop: "1px",
+    paddingRight: "20px",
+    paddingLeft: "20px",
+  },
+  scroll: {
+    height: "300px",
+    overflowY: "scroll",
+    overflowX: "hidden",
+  },
+  p: {
+    cursor: "pointer",
+  },
 });
 
-const Search: React.FC<Props> = () => {
+const Search: React.FC<Props> = ({ history, renderHistory }) => {
   const classes = useStyles();
   return (
     <div>
       <div className={classes.input_details}>
         <div className={classes.card}>
           <h4 className={classes.search_places}>Previous Search Results</h4>
-          <div></div>
+          <div className={classes.scroll}>
+            {history.map(
+              (h: {
+                type: React.ReactNode;
+                radius: React.ReactNode;
+                id: string;
+              }) => {
+                return (
+                  <div
+                    key={h.id}
+                    className={classes.box}
+                    // onClick={(h.id) => renderHistory(h.id)}
+                  >
+                    <p
+                      onClick={() => renderHistory(h.id)}
+                      className={classes.p}
+                    >
+                      <span>
+                        <RoomIcon className={classes.icon} />
+                      </span>
+                      <span>{h.type}, </span>
+                      <span>{h.radius} Away</span>
+                    </p>
+                  </div>
+                );
+              }
+            )}
+          </div>
         </div>
       </div>
     </div>
