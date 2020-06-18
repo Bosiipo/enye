@@ -35,22 +35,22 @@ const App: React.FC = () => {
   //     .then((data) => console.log(data));
   // }, []);
 
-  // useEffect(() => {
-  //   database
-  //     .ref("data")
-  //     .once("value")
-  //     .then((snapshot) => {
-  //       const store: any[] = [];
-  //       snapshot.forEach((childSnapshot) => {
-  //         store.push({
-  //           id: childSnapshot.key,
-  //           ...childSnapshot.val(),
-  //         });
-  //       });
-  //       // console.log(store);
-  //       setHistory(store.reverse());
-  //     });
-  // }, []);
+  useEffect(() => {
+    database
+      .ref("data")
+      .once("value")
+      .then((snapshot) => {
+        const store: any[] = [];
+        snapshot.forEach((childSnapshot) => {
+          store.push({
+            id: childSnapshot.key,
+            ...childSnapshot.val(),
+          });
+        });
+        // console.log(store);
+        setHistory(store.reverse());
+      });
+  }, []);
 
   const searchHospital = async (radius: number) => {
     if ("geolocation" in navigator) {
@@ -66,7 +66,11 @@ const App: React.FC = () => {
           },
           body: JSON.stringify(data),
         };
-        const response = await fetch("http://localhost:3001/api", options);
+        // http://localhost:3001/api
+        const response = await fetch(
+          "https://enyee.herokuapp.com/api",
+          options
+        );
         const results = await response.json();
         setHospitals(results);
         setHistoryData(undefined);
