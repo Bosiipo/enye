@@ -3,12 +3,12 @@ import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 
 interface Props {
-  searchHospital: (radius: number) => void;
-  onChangeRadius:
-    | ((event: React.ChangeEvent<HTMLInputElement>) => void)
-    | undefined;
-  radius: number;
-  onChangeType: (e: any) => void;
+  //   searchHospital: (radius: number) => void;
+  //   onChangeRadius:
+  //     | ((event: React.ChangeEvent<HTMLInputElement>) => void)
+  //     | undefined;
+  //   radius: number;
+  //   onChangeType: (e: any) => void;
 }
 
 const useStyles = makeStyles({
@@ -72,50 +72,14 @@ const useStyles = makeStyles({
   },
 });
 
-const Search: React.FC<Props> = ({
-  searchHospital,
-  onChangeRadius,
-  onChangeType,
-  radius,
-}) => {
+const Search: React.FC<Props> = () => {
   const classes = useStyles();
   return (
     <div>
       <div className={classes.input_details}>
         <div className={classes.card}>
-          <h4 className={classes.search_places}>Search for Places</h4>
-          <h5 className={classes.select_radius}>Select Radius</h5>
-          <input
-            type="number"
-            className={classes.input}
-            onChange={onChangeRadius}
-            // onBlur={() => searchHospital(radius)}
-            value={radius}
-            name="radius"
-            placeholder="Enter your search radius here in km"
-          />
-          <p className={classes.default_radius}>
-            default would search by hospitals
-          </p>
-          <h5 className={classes.select_type}>Select Type</h5>
-          <select
-            className={classes.dropdown}
-            id="select"
-            onChange={onChangeType}
-          >
-            <option value="">-</option>
-            <option value="hospital">Clinic/Hospital/Medical-Center</option>
-            <option value="pharmacy">Pharmacy</option>
-          </select>
-          <p className={classes.default_radius}>search in kilometres</p>
-          <Button
-            variant="contained"
-            color="primary"
-            onBlur={() => searchHospital(radius)}
-            className={classes.button}
-          >
-            Search
-          </Button>
+          <h4 className={classes.search_places}>Previous Search Results</h4>
+          <div></div>
         </div>
       </div>
     </div>

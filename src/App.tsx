@@ -4,6 +4,7 @@ import { HospitalProps } from "./components/Interfaces";
 import Search from "./components/Search";
 import HospitalList from "./components/HospitalList";
 import Navbar from "./components/Navbar";
+import History from "./components/History";
 import { makeStyles } from "@material-ui/core/styles";
 import "./firebase/firebase";
 
@@ -74,6 +75,7 @@ const App: React.FC = () => {
             radius={radius}
             // className={classes.forty}
           />
+          <History />
         </div>
         <div className={classes.sixty}>
           <HospitalList hospitals={hospitals} />
