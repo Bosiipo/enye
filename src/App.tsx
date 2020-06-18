@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 import { HospitalProps, HistoryProps } from "./components/Interfaces";
 import Search from "./components/Search";
-import HistoryData from "./components/HistoryData";
 import HospitalList from "./components/HospitalList";
 import Navbar from "./components/Navbar";
 import History from "./components/History";
@@ -16,8 +15,6 @@ const useStyles = makeStyles({
   },
   forty: {
     width: "35%",
-    // padding: "60px",
-    // border: "2px solid black",
   },
   sixty: {
     width: "65%",
@@ -32,28 +29,28 @@ const App: React.FC = () => {
   const [hospitals, setHospitals] = useState<Array<HospitalProps>>([]);
   const [historyData, setHistoryData] = useState<HistoryProps>();
 
-  useEffect(() => {
-    fetch("http://localhost:3001/")
-      .then((res) => res.json())
-      .then((data) => console.log(data));
-  }, []);
+  // useEffect(() => {
+  //   fetch("http://localhost:3001/")
+  //     .then((res) => res.json())
+  //     .then((data) => console.log(data));
+  // }, []);
 
-  useEffect(() => {
-    database
-      .ref("data")
-      .once("value")
-      .then((snapshot) => {
-        const store: any[] = [];
-        snapshot.forEach((childSnapshot) => {
-          store.push({
-            id: childSnapshot.key,
-            ...childSnapshot.val(),
-          });
-        });
-        console.log(store);
-        setHistory(store.reverse());
-      });
-  }, []);
+  // useEffect(() => {
+  //   database
+  //     .ref("data")
+  //     .once("value")
+  //     .then((snapshot) => {
+  //       const store: any[] = [];
+  //       snapshot.forEach((childSnapshot) => {
+  //         store.push({
+  //           id: childSnapshot.key,
+  //           ...childSnapshot.val(),
+  //         });
+  //       });
+  //       // console.log(store);
+  //       setHistory(store.reverse());
+  //     });
+  // }, []);
 
   const searchHospital = async (radius: number) => {
     if ("geolocation" in navigator) {
@@ -72,12 +69,26 @@ const App: React.FC = () => {
         const response = await fetch("http://localhost:3001/api", options);
         const results = await response.json();
         setHospitals(results);
-        // console.log(type, radius);
+        setHistoryData(undefined);
         database.ref("data").push({
           type,
           radius: `${radius}km`,
           results: results.results,
         });
+        database
+          .ref("data")
+          .once("value")
+          .then((snapshot) => {
+            const store: any[] = [];
+            snapshot.forEach((childSnapshot) => {
+              store.push({
+                id: childSnapshot.key,
+                ...childSnapshot.val(),
+              });
+            });
+            // console.log(store);
+            setHistory(store.reverse());
+          });
       });
     } else {
       alert(
@@ -86,8 +97,6 @@ const App: React.FC = () => {
     }
   };
 
-  console.log(hospitals);
-
   const renderHistory = (id: string) => {
     history.map((el) => {
       if (el.id === id) {
@@ -95,8 +104,6 @@ const App: React.FC = () => {
       }
     });
   };
-
-  console.log(historyData);
 
   // useEffect(() => {
   //   renderHistory("-MA5lmqIrJMnY-dkkOy-");
@@ -120,11 +127,7 @@ const App: React.FC = () => {
           <History history={history} renderHistory={renderHistory} />
         </div>
         <div className={classes.sixty}>
-          {/* {historyData.length === 0 ? ( */}
           <HospitalList hospitals={hospitals} historyData={historyData} />
-          {/* ) : (
-            <HistoryData /> */}
-          )}
         </div>
       </div>
     </div>

@@ -106,11 +106,7 @@ const Search: React.FC<Props> = ({ history, renderHistory }) => {
                 id: string;
               }) => {
                 return (
-                  <div
-                    key={h.id}
-                    className={classes.box}
-                    // onClick={(h.id) => renderHistory(h.id)}
-                  >
+                  <div key={h.id} className={classes.box}>
                     <p
                       onClick={() => renderHistory(h.id)}
                       className={classes.p}

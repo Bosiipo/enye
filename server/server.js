@@ -24,12 +24,12 @@ app.get('/', (req, res) => {
 });
 
 app.post('/api', async (req, res) => {
-  console.log(req.body.latitude, req.body.longitude);
+  // console.log(req.body.latitude, req.body.longitude);
 
   const { latitude, longitude, radius = '2000', type = 'hospital' } = req.body;
 
   const location = `${latitude}, ${longitude}`;
-  console.log(radius, type);
+  // console.log(radius, type);
 
   let url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${process.env.KEY}&location=${location}&radius=${radius}&type=${type}`
 

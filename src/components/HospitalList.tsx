@@ -49,18 +49,32 @@ const HospitalList: React.FC<any> = ({ hospitals, historyData }) => {
   return (
     <div className={classes.parent}>
       <Container maxWidth="sm" className={classes.scroll}>
-        {hospitals && hospitals.length === 0 ? (
-          <p className={classes.p}>
-            Your search results or history will appear here
-          </p>
+        {historyData === undefined ? (
+          hospitals && hospitals.length === 0 ? (
+            <p className={classes.p}>
+              Your search results or history will appear here
+            </p>
+          ) : (
+            hospitals &&
+            hospitals.results.map((result: any) => (
+              <List key={result.id} className={classes.list}>
+                <div className={classes.cover}>
+                  <h3 className={classes.hospital_name}>{result.name}</h3>
+                  <span>
+                    <LocalHospitalRoundedIcon className={classes.icon} />
+                  </span>
+                </div>
+
+                <p className={classes.address}>Address: {result.vicinity}</p>
+              </List>
+            ))
+          )
         ) : (
-          hospitals &&
-          hospitals.results.map((result: any) => (
+          historyData.results.map((result: any) => (
             <List key={result.id} className={classes.list}>
               <div className={classes.cover}>
                 <h3 className={classes.hospital_name}>{result.name}</h3>
                 <span>
-                  {/* <FontAwesomeIcon icon="first-aid" className="icon" /> */}
                   <LocalHospitalRoundedIcon className={classes.icon} />
                 </span>
               </div>

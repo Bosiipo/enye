@@ -111,7 +111,7 @@ const Search: React.FC<Props> = ({
           <Button
             variant="contained"
             color="primary"
-            onBlur={() => searchHospital(radius)}
+            onClick={() => searchHospital(radius)}
             className={classes.button}
           >
             Search
