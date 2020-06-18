@@ -5,6 +5,11 @@ import Container from "@material-ui/core/Container";
 import List from "@material-ui/core/List";
 
 const useStyles = makeStyles({
+  parent: {
+    // width: "60%",
+    // display: "flex",
+    // justifyContent: "flex-end",
+  },
   p: {
     textAlign: "center",
   },
@@ -37,26 +42,23 @@ const useStyles = makeStyles({
 const HospitalList: React.FC<any> = ({ hospitals }) => {
   const classes = useStyles();
   return (
-    <div>
+    <div className={classes.parent}>
       <Container maxWidth="sm">
         {hospitals && hospitals.length === 0 ? (
           <p className={classes.p}>Enter your search radius in metres</p>
         ) : (
           hospitals &&
-          hospitals.map((hospital: any) => (
-            <List key={hospital.id} className={classes.list}>
+          hospitals.results.map((result: any) => (
+            <List key={result.id} className={classes.list}>
               <div className={classes.cover}>
-                <h3 className={classes.hospital_name}>{hospital.poi.name}</h3>
+                <h3 className={classes.hospital_name}>{result.name}</h3>
                 <span>
                   {/* <FontAwesomeIcon icon="first-aid" className="icon" /> */}
                   <LocalHospitalRoundedIcon className={classes.icon} />
                 </span>
               </div>
 
-              <p className={classes.address}>
-                Address: {hospital.address.freeformAddress},{" "}
-                {hospital.address.country}
-              </p>
+              <p className={classes.address}>Address: {result.vicinity}</p>
             </List>
           ))
         )}
