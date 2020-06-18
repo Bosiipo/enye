@@ -66,7 +66,6 @@ const App: React.FC = () => {
           },
           body: JSON.stringify(data),
         };
-        // http://localhost:3001/api
         const response = await fetch(
           "https://enyee.herokuapp.com/api",
           options

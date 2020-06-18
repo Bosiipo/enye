@@ -29,6 +29,7 @@
   "eslintConfig": {
     "extends": "react-app"
   },
+  "proxy": "https://enyee.herokuapp.com/",
   "browserslist": {
     "production": [
       ">0.2%",
