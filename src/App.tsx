@@ -6,7 +6,6 @@ import HospitalList from "./components/HospitalList";
 import Navbar from "./components/Navbar";
 import History from "./components/History";
 import { makeStyles } from "@material-ui/core/styles";
-import "./firebase/firebase";
 import { database } from "./firebase/firebase";
 
 const useStyles = makeStyles({
@@ -66,6 +65,8 @@ const App: React.FC = () => {
           },
           body: JSON.stringify(data),
         };
+        // https://enyee.herokuapp.com/api
+        // http://localhost:3000/api
         const response = await fetch(
           "https://enyee.herokuapp.com/api",
           options
@@ -89,7 +90,7 @@ const App: React.FC = () => {
                 ...childSnapshot.val(),
               });
             });
-            // console.log(store);
+            // console.log("how far now");
             setHistory(store.reverse());
           });
       });
