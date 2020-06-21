@@ -69,10 +69,10 @@ const useStyles = makeStyles({
     margin: "24px 20px",
   },
   box: {
-    // height: "20px",
+    border: "2px solid black",
     width: "75%",
-    border: "1px solid black",
     margin: "15px 46px",
+    boxShadow: "0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)",
   },
   icon: {
     color: "orange",

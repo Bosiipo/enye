@@ -42,9 +42,20 @@ const useStyles = makeStyles({
     paddingTop: "24px",
     paddingRight: "20px",
   },
+  minor: {
+    display: "flex",
+    justifyContent: "space-between",
+    paddingLeft: "30px",
+    paddingRight: "20px",
+  },
 });
 
-const HospitalList: React.FC<any> = ({ hospitals, historyData }) => {
+const HospitalList: React.FC<any> = ({
+  hospitals,
+  historyData,
+  currentUser,
+  signInStatus,
+}) => {
   const classes = useStyles();
   return (
     <div className={classes.parent}>
@@ -80,6 +91,25 @@ const HospitalList: React.FC<any> = ({ hospitals, historyData }) => {
               </div>
 
               <p className={classes.address}>Address: {result.vicinity}</p>
+              <div className={classes.minor}>
+                <span>
+                  Rating:{" "}
+                  {typeof result.rating === "number"
+                    ? result.rating
+                    : "Unavailable"}
+                </span>
+                {result.opening_hours ? (
+                  <span>
+                    Status:{" "}
+                    {result.opening_hours.open_now === true ? "Open" : "Closed"}
+                  </span>
+                ) : (
+                  <span>Status: Unavailable</span>
+                )}
+              </div>
+
+              {/* <p className={classes.address}></p> */}
+              {/* <p className={classes.address}>Address: {result.vicinity}</p> */}
             </List>
           ))
         )}

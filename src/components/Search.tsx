@@ -17,11 +17,10 @@ const useStyles = makeStyles({
     fontSize: "1rem",
     fontWeight: 400,
     lineHeight: 1.5,
-    border: "1px solid #ced4da",
-    borderRadius: "0.25rem",
-    transition: "border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out",
+    border: 0,
+    boxShadow: "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)",
+    transition: "all 0.3s cubic-bezier(.25,.8,.25,1)",
     width: "49%",
-    // marginTop: "50px",
     alignSelf: "center",
   },
   input_details: {
@@ -38,6 +37,8 @@ const useStyles = makeStyles({
     borderRadius: "0.25rem",
     width: "55%",
     alignSelf: "center",
+    boxShadow: "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)",
+    transition: "all 0.3s cubic-bezier(.25,.8,.25,1)",
   },
   search_places: {
     textAlign: "center",

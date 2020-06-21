@@ -59,3 +59,13 @@ export type HistoryProps = {
     vicinity: string;
   }[];
 };
+
+export type User = {
+  displayName: string | null;
+  email: string | null;
+  emailVerified: boolean;
+  photoURL: string | null;
+  uid: string | null;
+  phoneNumber: string | null;
+  providerData: (firebase.UserInfo | null)[];
+};
