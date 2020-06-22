@@ -9,7 +9,12 @@ import Login from "./components/Login";
 import SignUp from "./components/SignUp";
 import { makeStyles } from "@material-ui/core/styles";
 import { database, auth } from "./firebase/firebase";
-// import { AuthProvider } from "./Auth";
+import ApolloClient from "apollo-boost";
+import { ApolloProvider } from "react-apollo";
+
+const client = new ApolloClient({
+  uri: "/graphql",
+});
 
 const useStyles = makeStyles({
   main: {
@@ -68,10 +73,9 @@ const App: React.FC = () => {
             });
           });
           let user_store = store.filter((prevSearch) => {
-            return prevSearch.user_id === currentUser.uid;
+            return prevSearch.user.user_id === currentUser.uid;
           });
-          console.log(store);
-          console.log(user_store);
+
           setHistory(user_store.reverse());
         });
     }
@@ -130,7 +134,10 @@ const App: React.FC = () => {
         setHistoryData(undefined);
         if (currentUser !== undefined && currentUser !== null) {
           database.ref("data").push({
-            user_id: currentUser.uid,
+            user: {
+              user_id: currentUser.uid,
+              email: currentUser.email,
+            },
             type,
             radius: `${radius}km`,
             results: results.results,
@@ -147,10 +154,8 @@ const App: React.FC = () => {
                 });
               });
               let user_store = store.filter((prevSearch) => {
-                return prevSearch.user_id === currentUser.uid;
+                return prevSearch.user.user_id === currentUser.uid;
               });
-              console.log(store);
-              console.log(user_store);
               setHistory(user_store.reverse());
             });
         }
@@ -177,18 +182,13 @@ const App: React.FC = () => {
     auth
       .createUserWithEmailAndPassword(email.value, password.value)
       .then((cred) => {
-        // setCurrentUser(cred);
-        console.log(cred);
         onRouteChange("home");
       })
       .catch((error) => {
         let errorCode = error.code;
         let errorMessage = error.message;
-        console.log(errorCode, "ish");
-        console.log(errorMessage, "ish2");
+        console.log(errorCode, errorMessage);
       });
-    // console.log(obj);
-    // onRouteChange("home");
   };
 
   const handleLogin = (event: any) => {
@@ -198,18 +198,11 @@ const App: React.FC = () => {
     auth
       .signInWithEmailAndPassword(email.value, password.value)
       .then((cred) => {
-        // setCurrentUser(cred);
-        console.log(cred);
         onRouteChange("home");
       })
       .catch((error) => {
-        // let errorCode = error.code;
-        // let errorMessage = error.message;
-        // console.log(errorCode, "ish");
         alert("This user does not exist");
       });
-    // console.log(obj);
-    // onRouteChange("home");
   };
 
   const onRouteChange = (route: string) => {
@@ -229,44 +222,39 @@ const App: React.FC = () => {
       });
   };
 
-  // Get uid from here
-  console.log(currentUser);
-  console.log(auth.currentUser);
-  console.log(history);
-
   return (
-    // <AuthProvider>
-    <div className="App">
-      <Navbar signOut={signOut} onRouteChange={onRouteChange} />
-      <div>
-        {route === "sign_up" ? (
-          <SignUp handleSignUp={handleSignUp} onRouteChange={onRouteChange} />
-        ) : route === "login" ? (
-          <Login handleLogin={handleLogin} onRouteChange={onRouteChange} />
-        ) : (
-          <div className={classes.main}>
-            <div className={classes.forty}>
-              <Search
-                searchHospital={searchHospital}
-                onChangeRadius={(e) => setRadius(Number(e.target.value))}
-                onChangeType={(e) => setType(e.target.value)}
-                radius={radius}
-              />
-              <History history={history} renderHistory={renderHistory} />
+    <ApolloProvider client={client}>
+      <div className="App">
+        <Navbar signOut={signOut} onRouteChange={onRouteChange} />
+        <div>
+          {route === "sign_up" ? (
+            <SignUp handleSignUp={handleSignUp} onRouteChange={onRouteChange} />
+          ) : route === "login" ? (
+            <Login handleLogin={handleLogin} onRouteChange={onRouteChange} />
+          ) : (
+            <div className={classes.main}>
+              <div className={classes.forty}>
+                <Search
+                  searchHospital={searchHospital}
+                  onChangeRadius={(e) => setRadius(Number(e.target.value))}
+                  onChangeType={(e) => setType(e.target.value)}
+                  radius={radius}
+                />
+                <History history={history} renderHistory={renderHistory} />
+              </div>
+              <div className={classes.sixty}>
+                <HospitalList
+                  hospitals={hospitals}
+                  historyData={historyData}
+                  currentUser={currentUser}
+                  signInStatus={signInStatus}
+                />
+              </div>
             </div>
-            <div className={classes.sixty}>
-              <HospitalList
-                hospitals={hospitals}
-                historyData={historyData}
-                currentUser={currentUser}
-                signInStatus={signInStatus}
-              />
-            </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
-    </div>
-    // </AuthProvider>
+    </ApolloProvider>
   );
 };
 
