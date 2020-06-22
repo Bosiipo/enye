@@ -9,12 +9,12 @@ import Login from "./components/Login";
 import SignUp from "./components/SignUp";
 import { makeStyles } from "@material-ui/core/styles";
 import { database, auth } from "./firebase/firebase";
-import ApolloClient from "apollo-boost";
-import { ApolloProvider } from "react-apollo";
+// import ApolloClient from "apollo-boost";
+// import { ApolloProvider } from "react-apollo";
 
-const client = new ApolloClient({
-  uri: "/graphql",
-});
+// const client = new ApolloClient({
+//   uri: "/graphql",
+// });
 
 const useStyles = makeStyles({
   main: {
@@ -48,7 +48,7 @@ const App: React.FC = () => {
 
   // Connect Server
   useEffect(() => {
-    fetch("http://localhost:3001/")
+    fetch("https://enyee.herokuapp.com/")
       .then((res) => res.json())
       .then((data) => console.log(data));
   }, []);
@@ -128,7 +128,10 @@ const App: React.FC = () => {
         };
         // https://enyee.herokuapp.com/api
         // http://localhost:3000/api
-        const response = await fetch("http://localhost:3000/api", options);
+        const response = await fetch(
+          "https://enyee.herokuapp.com/api",
+          options
+        );
         const results = await response.json();
         setHospitals(results);
         setHistoryData(undefined);
@@ -223,38 +226,36 @@ const App: React.FC = () => {
   };
 
   return (
-    <ApolloProvider client={client}>
-      <div className="App">
-        <Navbar signOut={signOut} onRouteChange={onRouteChange} />
-        <div>
-          {route === "sign_up" ? (
-            <SignUp handleSignUp={handleSignUp} onRouteChange={onRouteChange} />
-          ) : route === "login" ? (
-            <Login handleLogin={handleLogin} onRouteChange={onRouteChange} />
-          ) : (
-            <div className={classes.main}>
-              <div className={classes.forty}>
-                <Search
-                  searchHospital={searchHospital}
-                  onChangeRadius={(e) => setRadius(Number(e.target.value))}
-                  onChangeType={(e) => setType(e.target.value)}
-                  radius={radius}
-                />
-                <History history={history} renderHistory={renderHistory} />
-              </div>
-              <div className={classes.sixty}>
-                <HospitalList
-                  hospitals={hospitals}
-                  historyData={historyData}
-                  currentUser={currentUser}
-                  signInStatus={signInStatus}
-                />
-              </div>
+    <div className="App">
+      <Navbar signOut={signOut} onRouteChange={onRouteChange} />
+      <div>
+        {route === "sign_up" ? (
+          <SignUp handleSignUp={handleSignUp} onRouteChange={onRouteChange} />
+        ) : route === "login" ? (
+          <Login handleLogin={handleLogin} onRouteChange={onRouteChange} />
+        ) : (
+          <div className={classes.main}>
+            <div className={classes.forty}>
+              <Search
+                searchHospital={searchHospital}
+                onChangeRadius={(e) => setRadius(Number(e.target.value))}
+                onChangeType={(e) => setType(e.target.value)}
+                radius={radius}
+              />
+              <History history={history} renderHistory={renderHistory} />
             </div>
-          )}
-        </div>
+            <div className={classes.sixty}>
+              <HospitalList
+                hospitals={hospitals}
+                historyData={historyData}
+                currentUser={currentUser}
+                signInStatus={signInStatus}
+              />
+            </div>
+          </div>
+        )}
       </div>
-    </ApolloProvider>
+    </div>
   );
 };
 

@@ -1,12 +1,15 @@
 const express = require("express");
 const fetch = require("node-fetch");
-const expressGraphql = require("express-graphql");
-const schema = require("./schema/schema");
+// const expressGraphql = require("express-graphql");
+// const bodyParser = require("body-parser");
+// const schema = require("./schema/schema");
 const admin = require("firebase-admin");
 const serviceAccount = require("./config");
 
 const app = express();
+
 app.use(express.json());
+// app.use(bodyParser.text({ type: "application/graphql" }));
 app.use((req: any, res: any, next: any) => {
   res.header("Access-Control-Allow-Headers", "Content-Type");
   res.header("Access-Control-Allow-Origin", "*");
@@ -24,47 +27,47 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
-const get = (args: any) => {
-  const userId = args.user_id;
-  return db
-    .ref("data")
-    .once("value")
-    .then((snapshot: any[]) => {
-      const store: any[] = [];
-      snapshot.forEach((childSnapshot: { key: any; val: () => any }) => {
-        store.push({
-          id: childSnapshot.key,
-          ...childSnapshot.val(),
-        });
-      });
-      let user_store = store.filter((prevSearch) => {
-        return prevSearch.user.user_id === userId;
-      });
-      return user_store.reverse();
-    })
-    .catch((e: any) => console.error(e));
-};
+// const get = (args: any) => {
+//   const userId = args.user_id;
+//   return db
+//     .ref("data")
+//     .once("value")
+//     .then((snapshot: any[]) => {
+//       const store: any[] = [];
+//       snapshot.forEach((childSnapshot: { key: any; val: () => any }) => {
+//         store.push({
+//           id: childSnapshot.key,
+//           ...childSnapshot.val(),
+//         });
+//       });
+//       let user_store = store.filter((prevSearch) => {
+//         return prevSearch.user.user_id === userId;
+//       });
+//       return user_store.reverse();
+//     })
+//     .catch((e: any) => console.error(e));
+// };
 
-const root = {
-  result: get,
-};
+// const root = {
+//   result: get,
+// };
 
-app.get(
-  "/graphql",
-  expressGraphql({
-    schema: schema,
-    rootValue: root,
-    graphiql: true,
-  })
-);
+// app.get(
+//   "/graphql",
+//   expressGraphql({
+//     schema: schema,
+//     rootValue: root,
+//     graphiql: true,
+//   })
+// );
 
-app.use(
-  "/",
-  expressGraphql({
-    schema: schema,
-    rootValue: root,
-  })
-);
+// app.use(
+//   "/",
+//   expressGraphql({
+//     schema: schema,
+//     rootValue: root,
+//   })
+// );
 
 app.get("/", (req: any, res: any) => {
   res.json({
