@@ -62,7 +62,7 @@ const App: React.FC = () => {
   useEffect(() => {
     if (currentUser !== undefined && currentUser !== null) {
       database
-        .ref("data")
+        .ref("search")
         .once("value")
         .then((snapshot) => {
           const store: any[] = [];
@@ -73,9 +73,8 @@ const App: React.FC = () => {
             });
           });
           let user_store = store.filter((prevSearch) => {
-            return prevSearch.user.user_id === currentUser.uid;
+            return prevSearch.user_id === currentUser.uid;
           });
-
           setHistory(user_store.reverse());
         });
     }
@@ -136,11 +135,8 @@ const App: React.FC = () => {
         setHospitals(results);
         setHistoryData(undefined);
         if (currentUser !== undefined && currentUser !== null) {
-          database.ref("data").push({
-            user: {
-              user_id: currentUser.uid,
-              email: currentUser.email,
-            },
+          database.ref("search").push({
+            user_id: currentUser.uid,
             type,
             radius: `${radius}km`,
             results: results.results,
@@ -184,7 +180,13 @@ const App: React.FC = () => {
 
     auth
       .createUserWithEmailAndPassword(email.value, password.value)
-      .then((cred) => {
+      .then((cred: any) => {
+        if (cred !== null && cred !== undefined) {
+          database.ref("users").push({
+            user_id: cred.user.uid,
+            email: cred.user.email,
+          });
+        }
         onRouteChange("home");
       })
       .catch((error) => {
@@ -193,6 +195,8 @@ const App: React.FC = () => {
         console.log(errorCode, errorMessage);
       });
   };
+
+  console.log(currentUser);
 
   const handleLogin = (event: any) => {
     event.preventDefault();

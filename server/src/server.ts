@@ -1,15 +1,12 @@
 const express = require("express");
 const fetch = require("node-fetch");
-// const expressGraphql = require("express-graphql");
-// const bodyParser = require("body-parser");
-// const schema = require("./schema/schema");
+const expressGraphql = require("express-graphql");
+const schema = require("./schema/schema");
 const admin = require("firebase-admin");
 const serviceAccount = require("./config");
-
 const app = express();
 
 app.use(express.json());
-// app.use(bodyParser.text({ type: "application/graphql" }));
 app.use((req: any, res: any, next: any) => {
   res.header("Access-Control-Allow-Headers", "Content-Type");
   res.header("Access-Control-Allow-Origin", "*");
@@ -23,47 +20,65 @@ if (process.env.NODE_ENV !== "production") {
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: process.env.DATABASE_URL,
+  // databaseAuthVariableOverride: {
+  //   uid: "my-service-worker"
+  // }
 });
 
-const db = admin.firestore();
+const db = admin.database();
 
-// const get = (args: any) => {
-//   const userId = args.user_id;
-//   return db
-//     .ref("data")
-//     .once("value")
-//     .then((snapshot: any[]) => {
-//       const store: any[] = [];
-//       snapshot.forEach((childSnapshot: { key: any; val: () => any }) => {
-//         store.push({
-//           id: childSnapshot.key,
-//           ...childSnapshot.val(),
-//         });
-//       });
-//       let user_store = store.filter((prevSearch) => {
-//         return prevSearch.user.user_id === userId;
-//       });
-//       return user_store.reverse();
-//     })
-//     .catch((e: any) => console.error(e));
-// };
+// const userId = "OcIe1K17fzTz9sxN8jxGVshymFi2";
+// db.ref("search")
+//   .once("value")
+//   .then((snapshot: any[]) => {
+//     const store: any[] = [];
+//     snapshot.forEach((childSnapshot: { key: any; val: () => any }) => {
+//       if (childSnapshot.val().user_id === userId) {
+//         let child_val = childSnapshot.val();
+//         store.push(child_val.results);
+//       }
+//     });
+//     console.log(store);
+//     return store;
+//   });
 
-// const root = {
-//   result: get,
-// };
+const get = (args: any) => {
+  const userId = args.user_id;
+  db.ref("search")
+    .once("value")
+    .then((snapshot: any[]) => {
+      const store: any[] = [];
+      snapshot.forEach((childSnapshot: { key: any; val: () => any }) => {
+        if (childSnapshot.val().user_id === userId) {
+          let child_val = childSnapshot.val();
+          store.push(child_val.results);
+        }
+      });
+      console.log(store);
+      return store;
+    })
+    .catch((e: any) => console.log(e));
+};
+
+// console.log(get("OcIe1K17fzTz9sxN8jxGVshymFi2"));
+
+const root = {
+  result: get,
+};
+
+app.use(
+  "/graphql",
+  expressGraphql({
+    schema,
+    graphiql: true,
+    rootValue: root,
+  })
+);
 
 // app.get(
 //   "/graphql",
 //   expressGraphql({
-//     schema: schema,
-//     rootValue: root,
 //     graphiql: true,
-//   })
-// );
-
-// app.use(
-//   "/",
-//   expressGraphql({
 //     schema: schema,
 //     rootValue: root,
 //   })
@@ -95,4 +110,5 @@ app.post("/api", async (req: any, res: any) => {
 });
 
 const PORT = process.env.PORT || 3001;
+
 app.listen(PORT, () => console.log(`listening on ${PORT}`));
