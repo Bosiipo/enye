@@ -236,7 +236,7 @@ const App: React.FC = () => {
     });
   };
 
-  console.log(userId);
+  // console.log(userId);
 
   const onRouteChange = (route: string) => {
     setRoute(route);

@@ -77,26 +77,53 @@ export const auth = firebase.auth();
 //           })
 // })
 
-// let user = database
-//             .collection("users")
-//             .where("user_id", "==", "iQLuz0nrPYQbelo21VnKyCT2CWq1")
-//             .get();
+// Test for return in GraphQL
+// let user;
 
-// console.log(user);
+// const trial = async() => {
+//   try {
+//     let user;
+//     const db = await database.collection("users")
+//   .where("user_id", "==", "iQLuz0nrPYQbelo21VnKyCT2CWq1")
+//   .get();
+//   const resolution = await db.forEach((doc) => {
+//     user = doc.data();
+//     return user
+//   });
+//   // Why undefined?
+//   console.log(resolution);
+//   } catch (error) {
+//     console.log(user);
+//   }
+// }
 
-console.log(database.collection("users").get());
-database.collection("users").get().then((querySnapshot) => {
-  // let data = [];
-  let email;
-  querySnapshot.docs.map((doc) => {
-      console.log(doc.id, " => ", doc.data().email);
-      // data.push(doc.data().email)
-      email = doc.data().email;
+// trial();
+// console.log(trial()); //Returns a promise
 
-      // console.log(email);
-      // console.log(typeof doc.data().email);
-  });
-  console.log(email);
-});
+let user;
+database
+            .collection("users")
+            .where("user_id", "==", "iQLuz0nrPYQbelo21VnKyCT2CWq1")
+            .get().then((querySnapshot) => {
+              querySnapshot.forEach((doc) => {
+                console.log(doc.data());
+                user = doc.data();
+              });
+              console.log(user);
+              return user
+            }).catch(e => console.log(e))
+
+console.log(user);
+
+const userId = "iQLuz0nrPYQbelo21VnKyCT2CWq1"
+
+// database.collection("history").where("user_id", "==", userId).get()
+// .then((querySnapshot) => {
+//   querySnapshot.forEach((doc) => 
+//     console.log(doc.data())
+//   )
+// }).catch(e => console.log(e))
+
+
 
 

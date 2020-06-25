@@ -6,6 +6,7 @@ const schema = buildSchema(`
     vicinity: String
   }
   type History {
+    user_id: String
     radius: String
     type: String
     results: [Results]
@@ -16,7 +17,8 @@ const schema = buildSchema(`
     history: [History]
   }
   type Query {
-    users: [User]
-  }`);
+    user(userId: String): User
+  }
+`);
 
 module.exports = schema;

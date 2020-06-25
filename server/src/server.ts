@@ -24,34 +24,24 @@ admin.initializeApp({
 
 const database = admin.firestore();
 
+// Problem is not from here
 const root = {
-  User: {
-    email: () => {
-      database
-        .collection("users")
-        .get()
-        .then((querySnapshot: any) => {
-          let email;
-          querySnapshot.docs.map((doc: any) => {
-            email = doc.data().email;
-          });
-          return email;
-        });
-    },
-  },
   Query: {
-    users: async () => {
-      return await database
+    // Returns an object which is correct, with a field value which is filled but graphQL returns null
+    user: (parent: any, args: any) => {
+      const userId = args.userId;
+      let user: any;
+      return database //This is correct as "return" resolves the promise
         .collection("users")
+        .where("user_id", "==", userId)
         .get()
-        .then((querySnapshot: any) => {
-          let data: any[] = [];
-          querySnapshot.forEach((doc: any) => {
-            // console.log(doc.id, " => ", doc.data());
-            data.push({ id: doc.id, ...doc.data() });
+        .then((snapshot: any[]) => {
+          snapshot.forEach((doc: { id: any; data: () => any }) => {
+            console.log(doc.id, "==>", doc.data()); //Does not console shit!, might be something wrong with this after all?
+            user = doc.data();
+            return user;
           });
-          console.log(data);
-          return data;
+          return user;
         })
         .catch((e: any) => console.log(e));
     },
@@ -64,6 +54,15 @@ app.use(
     schema,
     graphiql: true,
     rootValue: root,
+  })
+);
+
+app.get(
+  "/graphql",
+  expressGraphql({
+    schema,
+    rootValue: root,
+    graphiql: true,
   })
 );
 
