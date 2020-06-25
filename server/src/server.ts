@@ -1,7 +1,7 @@
 const express = require("express");
 const fetch = require("node-fetch");
 const expressGraphql = require("express-graphql");
-const schema = require("./schema/schema");
+const schema = require("./schema");
 const admin = require("firebase-admin");
 const serviceAccount = require("./config");
 const app = express();
@@ -20,50 +20,42 @@ if (process.env.NODE_ENV !== "production") {
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: process.env.DATABASE_URL,
-  // databaseAuthVariableOverride: {
-  //   uid: "my-service-worker"
-  // }
 });
 
-const db = admin.database();
-
-// const userId = "OcIe1K17fzTz9sxN8jxGVshymFi2";
-// db.ref("search")
-//   .once("value")
-//   .then((snapshot: any[]) => {
-//     const store: any[] = [];
-//     snapshot.forEach((childSnapshot: { key: any; val: () => any }) => {
-//       if (childSnapshot.val().user_id === userId) {
-//         let child_val = childSnapshot.val();
-//         store.push(child_val.results);
-//       }
-//     });
-//     console.log(store);
-//     return store;
-//   });
-
-const get = (args: any) => {
-  const userId = args.user_id;
-  db.ref("search")
-    .once("value")
-    .then((snapshot: any[]) => {
-      const store: any[] = [];
-      snapshot.forEach((childSnapshot: { key: any; val: () => any }) => {
-        if (childSnapshot.val().user_id === userId) {
-          let child_val = childSnapshot.val();
-          store.push(child_val.results);
-        }
-      });
-      console.log(store);
-      return store;
-    })
-    .catch((e: any) => console.log(e));
-};
-
-// console.log(get("OcIe1K17fzTz9sxN8jxGVshymFi2"));
+const database = admin.firestore();
 
 const root = {
-  result: get,
+  User: {
+    email: () => {
+      database
+        .collection("users")
+        .get()
+        .then((querySnapshot: any) => {
+          let email;
+          querySnapshot.docs.map((doc: any) => {
+            email = doc.data().email;
+          });
+          return email;
+        });
+    },
+  },
+  Query: {
+    users: async () => {
+      return await database
+        .collection("users")
+        .get()
+        .then((querySnapshot: any) => {
+          let data: any[] = [];
+          querySnapshot.forEach((doc: any) => {
+            // console.log(doc.id, " => ", doc.data());
+            data.push({ id: doc.id, ...doc.data() });
+          });
+          console.log(data);
+          return data;
+        })
+        .catch((e: any) => console.log(e));
+    },
+  },
 };
 
 app.use(
@@ -74,15 +66,6 @@ app.use(
     rootValue: root,
   })
 );
-
-// app.get(
-//   "/graphql",
-//   expressGraphql({
-//     graphiql: true,
-//     schema: schema,
-//     rootValue: root,
-//   })
-// );
 
 app.get("/", (req: any, res: any) => {
   res.json({

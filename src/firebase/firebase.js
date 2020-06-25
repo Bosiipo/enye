@@ -1,8 +1,8 @@
 import  * as firebase from 'firebase';
 import * as firebaseui from 'firebaseui'; 
-
+import "firebase/firestore";
 import 'firebase/auth';
-// import firebase from 'firebase/app';
+
 
 const config = {
     apiKey: process.env.REACT_APP_API_KEY,
@@ -38,7 +38,65 @@ if (ui.isPendingRedirect()) {
     ui.start('.App', uiConfig);
 }
 
-export const database = firebase.database();
+export const database = firebase.firestore();
 
 export const auth = firebase.auth();
+
+// console.log((database.collection("users").get().then((querySnapshot) => {
+//   querySnapshot.docs.forEach((doc) => {
+//     console.log(doc.data());
+//     // archive.push({ id: doc.id, ...doc.data() });
+//   });
+// })));
+
+
+// FAIR
+// let user = database.collection("users").doc("uA2JiJSe4udM9ovRtRCQ").get()
+//   .then((doc) => console.log(doc.data()))
+//   .catch(function(error) {
+//     console.log("Error getting document:", error);
+//   });
+
+
+
+// IMPORTANT UPDATES DATA INTO THE USER HISTORY
+// let userId = "uA2JiJSe4udM9ovRtRCQ";
+// let userr = database.collection("users").doc(userId).get()
+//   // Returns the correct thing
+  // .then((doc) => console.log(doc.data()))
+  // .catch(function(error) {
+  //   console.log("Error getting document:", error);
+  // });
+
+// userr.update({
+//   history: firebase.firestore.FieldValue.arrayUnion({
+//             // user_id: currentUser.uid,
+//             type: "clinic",
+//             radius: `2km`,
+//             results: results.results,
+//           })
+// })
+
+// let user = database
+//             .collection("users")
+//             .where("user_id", "==", "iQLuz0nrPYQbelo21VnKyCT2CWq1")
+//             .get();
+
+// console.log(user);
+
+console.log(database.collection("users").get());
+database.collection("users").get().then((querySnapshot) => {
+  // let data = [];
+  let email;
+  querySnapshot.docs.map((doc) => {
+      console.log(doc.id, " => ", doc.data().email);
+      // data.push(doc.data().email)
+      email = doc.data().email;
+
+      // console.log(email);
+      // console.log(typeof doc.data().email);
+  });
+  console.log(email);
+});
+
 

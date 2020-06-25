@@ -9,6 +9,7 @@ import Login from "./components/Login";
 import SignUp from "./components/SignUp";
 import { makeStyles } from "@material-ui/core/styles";
 import { database, auth } from "./firebase/firebase";
+import firebase from "firebase";
 // import ApolloClient from "apollo-boost";
 // import { ApolloProvider } from "react-apollo";
 
@@ -40,6 +41,7 @@ const App: React.FC = () => {
   );
   const [signInStatus, setSignInStatus] = useState<string>("");
   const [currentUser, setCurrentUser] = useState<User | null>();
+  const [userId, setUserId] = useState<string>("");
 
   // Load user's data
   useEffect(() => {
@@ -48,7 +50,8 @@ const App: React.FC = () => {
 
   // Connect Server
   useEffect(() => {
-    fetch("https://enyee.herokuapp.com/")
+    // https://enyee.herokuapp.com/
+    fetch("http://localhost:3000/")
       .then((res) => res.json())
       .then((data) => console.log(data));
   }, []);
@@ -62,20 +65,18 @@ const App: React.FC = () => {
   useEffect(() => {
     if (currentUser !== undefined && currentUser !== null) {
       database
-        .ref("search")
-        .once("value")
-        .then((snapshot) => {
-          const store: any[] = [];
-          snapshot.forEach((childSnapshot) => {
-            store.push({
-              id: childSnapshot.key,
-              ...childSnapshot.val(),
-            });
+        .collection("history")
+        .where("user_id", "==", currentUser.uid)
+        .get()
+        .then((querySnapshot) => {
+          let history: any[] = [];
+          querySnapshot.docs.forEach((doc) => {
+            history.push({ id: doc.id, ...doc.data() });
           });
-          let user_store = store.filter((prevSearch) => {
-            return prevSearch.user_id === currentUser.uid;
-          });
-          setHistory(user_store.reverse());
+          setHistory(history);
+        })
+        .catch((error) => {
+          console.log("Error getting documents: ", error);
         });
     }
   }, [currentUser]);
@@ -111,6 +112,54 @@ const App: React.FC = () => {
     );
   };
 
+  const handleSignUp = async (event: any) => {
+    event.preventDefault();
+    const { email, password } = event.target.elements;
+    try {
+      let cred: any = await auth.createUserWithEmailAndPassword(
+        email.value,
+        password.value
+      );
+      let data = await database.collection("users").add({
+        user_id: cred.user.uid,
+        email: cred.user.email,
+        history: [],
+      });
+      // Store database generated id
+      setUserId(data.id);
+      onRouteChange("home");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleLogin = async (event: any) => {
+    event.preventDefault();
+    const { email, password } = event.target.elements;
+
+    auth
+      .signInWithEmailAndPassword(email.value, password.value)
+      .then((cred) => {
+        onRouteChange("home");
+      })
+      .catch((error) => {
+        alert("This user does not exist");
+      });
+    // Store this user's database generated id
+    database
+      .collection("users")
+      .where("email", "==", email.value)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          setUserId(doc.id);
+        });
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+      });
+  };
+
   const searchHospital = async (radius: number) => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(async (position) => {
@@ -134,37 +183,50 @@ const App: React.FC = () => {
         const results = await response.json();
         setHospitals(results);
         setHistoryData(undefined);
+        // Save search data to database
         if (currentUser !== undefined && currentUser !== null) {
-          database.ref("search").push({
+          let archive: any[] = [];
+          database.collection("history").add({
             user_id: currentUser.uid,
             type,
             radius: `${radius}km`,
             results: results.results,
           });
+          // Populate history for render
           database
-            .ref("data")
-            .once("value")
-            .then((snapshot) => {
-              const store: any[] = [];
-              snapshot.forEach((childSnapshot) => {
-                store.push({
-                  id: childSnapshot.key,
-                  ...childSnapshot.val(),
-                });
+            .collection("history")
+            .where("user_id", "==", currentUser.uid)
+            .get()
+            .then((querySnapshot) => {
+              querySnapshot.docs.forEach((doc) => {
+                console.log(doc.data());
+                archive.push({ id: doc.id, ...doc.data() });
               });
-              let user_store = store.filter((prevSearch) => {
-                return prevSearch.user.user_id === currentUser.uid;
-              });
-              setHistory(user_store.reverse());
+              console.log(archive);
+              setHistory(archive);
+            })
+            .catch((error) => {
+              console.log("Error getting documents: ", error);
             });
+          // how do i get doc(id)
+          let user = database.collection("users").doc(userId);
+          user.update({
+            history: firebase.firestore.FieldValue.arrayUnion({
+              type,
+              radius: `${radius}km`,
+              results: results.results,
+            }),
+          });
+        } else {
+          alert(
+            "This app needs to access your current location in order for it to work"
+          );
         }
       });
-    } else {
-      alert(
-        "This app needs to access your current location in order for it to work"
-      );
     }
   };
+
+  // console.log(history);
 
   const renderHistory = (id: string) => {
     history.map((el) => {
@@ -174,43 +236,7 @@ const App: React.FC = () => {
     });
   };
 
-  const handleSignUp = (event: any) => {
-    event.preventDefault();
-    const { email, password } = event.target.elements;
-
-    auth
-      .createUserWithEmailAndPassword(email.value, password.value)
-      .then((cred: any) => {
-        if (cred !== null && cred !== undefined) {
-          database.ref("users").push({
-            user_id: cred.user.uid,
-            email: cred.user.email,
-          });
-        }
-        onRouteChange("home");
-      })
-      .catch((error) => {
-        let errorCode = error.code;
-        let errorMessage = error.message;
-        console.log(errorCode, errorMessage);
-      });
-  };
-
-  console.log(currentUser);
-
-  const handleLogin = (event: any) => {
-    event.preventDefault();
-    const { email, password } = event.target.elements;
-
-    auth
-      .signInWithEmailAndPassword(email.value, password.value)
-      .then((cred) => {
-        onRouteChange("home");
-      })
-      .catch((error) => {
-        alert("This user does not exist");
-      });
-  };
+  console.log(userId);
 
   const onRouteChange = (route: string) => {
     setRoute(route);
@@ -222,6 +248,7 @@ const App: React.FC = () => {
       .then(() => {
         alert("sign out successful");
         setCurrentUser(null);
+        // setUserId("");
         onRouteChange("login");
       })
       .catch((error) => {

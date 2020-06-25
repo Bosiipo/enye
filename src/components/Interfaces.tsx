@@ -44,6 +44,7 @@ export type HospitalProps = {
 
 export type HistoryProps = {
   id: string;
+  user_id: string;
   type: string;
   radius: string | number;
   results: {

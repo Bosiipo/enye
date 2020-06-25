@@ -1,18 +1,22 @@
 const { buildSchema } = require("graphql");
 
 const schema = buildSchema(`
-  type Values {
-    id: String
+  type Results {
     name: String
     vicinity: String
   }
+  type History {
+    radius: String
+    type: String
+    results: [Results]
+  }
   type User {
-    id: Int
+    user_id: String
     email: String
-    values: [Values]
+    history: [History]
   }
   type Query {
-    user(userId: String): [Values]
+    users: [User]
   }`);
 
 module.exports = schema;

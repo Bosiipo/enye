@@ -78,8 +78,8 @@ const useStyles = makeStyles({
     color: "orange",
     fontSize: "20px",
     paddingTop: "1px",
-    paddingRight: "20px",
-    paddingLeft: "20px",
+    paddingRight: "16px",
+    paddingLeft: "10px",
   },
   scroll: {
     height: "300px",
