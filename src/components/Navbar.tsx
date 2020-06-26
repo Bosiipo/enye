@@ -1,10 +1,7 @@
 import React from "react";
 import { AppBar, Toolbar, Button } from "@material-ui/core";
-// import Toolbar from "@material-ui/core/Toolbar";
 import { makeStyles } from "@material-ui/core/styles";
 import { auth } from "../firebase/firebase";
-// import MenuIcon from '@material-ui/icons/Menu';
-// import IconButton from '@material-ui/core/IconButton';
 
 const useStyles = makeStyles({
   app_bar: {

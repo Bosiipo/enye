@@ -10,12 +10,6 @@ import SignUp from "./components/SignUp";
 import { makeStyles } from "@material-ui/core/styles";
 import { database, auth } from "./firebase/firebase";
 import firebase from "firebase";
-// import ApolloClient from "apollo-boost";
-// import { ApolloProvider } from "react-apollo";
-
-// const client = new ApolloClient({
-//   uri: "/graphql",
-// });
 
 const useStyles = makeStyles({
   main: {
@@ -50,8 +44,7 @@ const App: React.FC = () => {
 
   // Connect Server
   useEffect(() => {
-    // https://enyee.herokuapp.com/
-    fetch("http://localhost:3000/")
+    fetch("https://enyee.herokuapp.com/")
       .then((res) => res.json())
       .then((data) => console.log(data));
   }, []);
