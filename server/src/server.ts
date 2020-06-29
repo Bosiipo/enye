@@ -1,6 +1,7 @@
 const express = require("express");
 const fetch = require("node-fetch");
 const schema = require("./schema");
+const cors = require("cors");
 const expressGraphql = require("express-graphql");
 const app = express();
 
@@ -10,6 +11,7 @@ app.use((req: any, res: any, next: any) => {
   res.header("Access-Control-Allow-Origin", "*");
   next();
 });
+app.use(cors());
 
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
@@ -44,7 +46,7 @@ app.post("/api", async (req: any, res: any) => {
 
   const response = await fetch(url);
   const data = await response.json();
-  console.log(data);
+  // console.log(data);
 
   return res.json({
     ...data,

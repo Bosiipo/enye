@@ -1,12 +1,16 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-// import Button from "@material-ui/core/Button";
 import RoomIcon from "@material-ui/icons/Room";
-import { HistoryProps } from "./Interfaces";
+import { HistoryProps, User } from "./Interfaces";
+import { useQuery } from "@apollo/react-hooks";
+import gql from "graphql-tag";
+// import {HistoryProps} from "./components/Interfaces";
 
 interface Props {
   history: HistoryProps[];
+  currentUser: User | null | undefined;
   renderHistory: (id: string) => void;
+  userId: string;
 }
 
 const useStyles = makeStyles({
@@ -91,14 +95,71 @@ const useStyles = makeStyles({
   },
 });
 
-const Search: React.FC<Props> = ({ history, renderHistory }) => {
+interface Results {
+  id: string;
+  // name: string;
+  // rating: string;
+  // vicinity: string;
+}
+
+interface Users_history {
+  [x: string]: any;
+  id: string;
+  radius: string;
+  type: string;
+  results: [Results];
+}
+
+const HISTORY = gql`
+  query getUsersHistory($id: ID) {
+    users_history(id: $id) {
+      id
+      radius
+      type
+      results {
+        id
+        name
+        rating
+        vicinity
+      }
+    }
+  }
+`;
+
+const Search: React.FC<Props> = ({
+  // history,
+  renderHistory,
+  currentUser,
+  userId,
+}) => {
   const classes = useStyles();
+  const [history, setHistory] = useState<Array<HistoryProps>>([]);
+  const { data } = useQuery<Users_history, Results>(HISTORY, {
+    variables: { id: userId },
+    pollInterval: 600,
+  });
+
+  // if (data !== null && data !== undefined) {
+  //   setHistory(data.users_history);
+  // }
+
+  // useEffect(() => {
+  //   if (data !== null && data !== undefined) {
+  //     setHistory(data.users_history);
+  //   }
+  // }, [data, setHistory]);
+
+  // "ccdOSPoIczgogFagQMANXwzal7x1"
+
   return (
     <div>
       <div className={classes.input_details}>
         <div className={classes.card}>
           <h4 className={classes.search_places}>Previous Search Results</h4>
           <div className={classes.scroll}>
+            {/* {loading ? (
+              <p>Loading ...</p>
+            ) : ( */}
             {history.map(
               (h: {
                 type: React.ReactNode;
@@ -121,6 +182,7 @@ const Search: React.FC<Props> = ({ history, renderHistory }) => {
                 );
               }
             )}
+            {/* )} */}
           </div>
         </div>
       </div>

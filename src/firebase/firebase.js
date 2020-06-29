@@ -42,5 +42,97 @@ export const database = firebase.firestore();
 
 export const auth = firebase.auth();
 
+// const renderHistory = (id: string) => {
+//   history.map((el) => {
+//     if (el.id === id) {
+//       setHistoryData(el);
+//     }
+//   });
+// };
 
+
+// {
+//   users_history(id: "ccdOSPoIczgogFagQMANXwzal7x1"){
+//     radius
+//     type
+//     results{
+//       id
+//     }
+//   }
+// }
+
+// RETURNS CURRENT USER'S HISTORY
+// database
+//           .collection("users")
+//           .get()
+//           .then((querySnapshot) => {
+//             let history;
+//             let some = [];
+//             querySnapshot.forEach((doc) => {
+//               let user = doc.data();
+
+//               console.log(doc.id, "==>", doc.data())
+//               console.log({id: doc.id, ...doc.data()})
+//               if (user.user_id === "ccdOSPoIczgogFagQMANXwzal7x1") {
+//                 some.push({id: doc.id, ...doc.data().history});
+//                 history = user.history
+//               }
+//               console.log(doc.data(), doc.id);
+//             });
+//             console.log(some);
+//             console.log(history);
+//             return history;
+//           })
+//           .catch((e) => console.log(e));
+
+        // database
+        // .collection("history")
+        // .where("user_id", "==", "ccdOSPoIczgogFagQMANXwzal7x1")
+        // .get()
+        // .then((querySnapshot) => {
+        //   let history= [];
+        //   querySnapshot.docs.forEach((doc) => {
+        //     history.push({ id: doc.id, ...doc.data() });
+        //   });
+        //   console.log(history);
+        // })
+        // .catch((error) => {
+        //   console.log("Error getting documents: ", error);
+        // });
+
+        // Most current
+        // database
+        //   .collection("users")
+        //   .get()
+        //   .then((querySnapshot: any[]) => {
+        //     let history;
+        //     querySnapshot.forEach((doc: { data: () => any }) => {
+        //       let user = doc.data();
+        //       if (user.user_id === args.id) {
+        //         history = user.history;
+        //       }
+        //     });
+        //     console.log(history);
+        //     return history;
+        //   })
+        //   .catch((e: any) => console.log(e));
+
+// PREVIOUSLY WORKING
+// database
+//           .collection("users")
+//           .get()
+//           .then((querySnapshot) => {
+//             let users= [];
+//             querySnapshot.forEach((doc) => {
+//               let user = doc.data();
+//               users.push({
+//                 email: user.email,
+//                 user_id: user.user_id,
+//                 history: user.history,
+//               });
+//             });
+//             console.log(users);
+//             return users;
+//           })
+//           .catch((e) => console.log(e));
 

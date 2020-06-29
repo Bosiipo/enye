@@ -1,4 +1,9 @@
 import React, { useState, useEffect } from "react";
+import ApolloClient from "apollo-boost";
+// import { ApolloClient } from "apollo-client"; //apollographql doc.
+import { ApolloProvider } from "@apollo/react-hooks";
+// import { ApolloProvider, useQuery } from "react-apollo";
+// import gql from "graphql-tag";
 import "./App.css";
 import { HospitalProps, HistoryProps, User } from "./components/Interfaces";
 import Search from "./components/Search";
@@ -21,6 +26,12 @@ const useStyles = makeStyles({
   sixty: {
     width: "65%",
   },
+});
+
+// https://enyee.herokuapp.com/graphql
+
+const client = new ApolloClient({
+  uri: "http://localhost:3001/graphql",
 });
 
 const App: React.FC = () => {
@@ -55,24 +66,24 @@ const App: React.FC = () => {
   }, [route]);
 
   // Populate History
-  useEffect(() => {
-    if (currentUser !== undefined && currentUser !== null) {
-      database
-        .collection("history")
-        .where("user_id", "==", currentUser.uid)
-        .get()
-        .then((querySnapshot) => {
-          let history: any[] = [];
-          querySnapshot.docs.forEach((doc) => {
-            history.push({ id: doc.id, ...doc.data() });
-          });
-          setHistory(history);
-        })
-        .catch((error) => {
-          console.log("Error getting documents: ", error);
-        });
-    }
-  }, [currentUser]);
+  // useEffect(() => {
+  //   if (currentUser !== undefined && currentUser !== null) {
+  //     database
+  //       .collection("history")
+  //       .where("user_id", "==", currentUser.uid)
+  //       .get()
+  //       .then((querySnapshot) => {
+  //         let history: any[] = [];
+  //         querySnapshot.docs.forEach((doc) => {
+  //           history.push({ id: doc.id, ...doc.data() });
+  //         });
+  //         setHistory(history);
+  //       })
+  //       .catch((error) => {
+  //         console.log("Error getting documents: ", error);
+  //       });
+  //   }
+  // }, [currentUser, history]);
 
   const onAuthStateChange = () => {
     auth.onAuthStateChanged(
@@ -169,16 +180,13 @@ const App: React.FC = () => {
         };
         // https://enyee.herokuapp.com/api
         // http://localhost:3000/api
-        const response = await fetch(
-          "https://enyee.herokuapp.com/api",
-          options
-        );
+        const response = await fetch("http://localhost:3000/api", options);
         const results = await response.json();
         setHospitals(results);
         setHistoryData(undefined);
         // Save search data to database
         if (currentUser !== undefined && currentUser !== null) {
-          let archive: any[] = [];
+          // let archive: any[] = [];
           database.collection("history").add({
             user_id: currentUser.uid,
             type,
@@ -186,21 +194,19 @@ const App: React.FC = () => {
             results: results.results,
           });
           // Populate history for render
-          database
-            .collection("history")
-            .where("user_id", "==", currentUser.uid)
-            .get()
-            .then((querySnapshot) => {
-              querySnapshot.docs.forEach((doc) => {
-                console.log(doc.data());
-                archive.push({ id: doc.id, ...doc.data() });
-              });
-              console.log(archive);
-              setHistory(archive);
-            })
-            .catch((error) => {
-              console.log("Error getting documents: ", error);
-            });
+          // database
+          //   .collection("history")
+          //   .where("user_id", "==", currentUser.uid)
+          //   .get()
+          //   .then((querySnapshot) => {
+          //     querySnapshot.docs.forEach((doc) => {
+          //       archive.push({ id: doc.id, ...doc.data() });
+          //     });
+          //     setHistory(archive);
+          //   })
+          //   .catch((error) => {
+          //     console.log("Error getting documents: ", error);
+          //   });
           // how do i get doc(id)
           let user = database.collection("users").doc(userId);
           user.update({
@@ -221,10 +227,12 @@ const App: React.FC = () => {
 
   // console.log(history);
 
+  // Store History and render it in UI
+  // Go through user's history and render it when he clicks on it
   const renderHistory = (id: string) => {
-    history.map((el) => {
-      if (el.id === id) {
-        setHistoryData(el);
+    history.map((search) => {
+      if (search.id === id) {
+        setHistoryData(search);
       }
     });
   };
@@ -250,36 +258,43 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="App">
-      <Navbar signOut={signOut} onRouteChange={onRouteChange} />
-      <div>
-        {route === "sign_up" ? (
-          <SignUp handleSignUp={handleSignUp} onRouteChange={onRouteChange} />
-        ) : route === "login" ? (
-          <Login handleLogin={handleLogin} onRouteChange={onRouteChange} />
-        ) : (
-          <div className={classes.main}>
-            <div className={classes.forty}>
-              <Search
-                searchHospital={searchHospital}
-                onChangeRadius={(e) => setRadius(Number(e.target.value))}
-                onChangeType={(e) => setType(e.target.value)}
-                radius={radius}
-              />
-              <History history={history} renderHistory={renderHistory} />
+    <ApolloProvider client={client}>
+      <div className="App">
+        <Navbar signOut={signOut} onRouteChange={onRouteChange} />
+        <div>
+          {route === "sign_up" ? (
+            <SignUp handleSignUp={handleSignUp} onRouteChange={onRouteChange} />
+          ) : route === "login" ? (
+            <Login handleLogin={handleLogin} onRouteChange={onRouteChange} />
+          ) : (
+            <div className={classes.main}>
+              <div className={classes.forty}>
+                <Search
+                  searchHospital={searchHospital}
+                  onChangeRadius={(e) => setRadius(Number(e.target.value))}
+                  onChangeType={(e) => setType(e.target.value)}
+                  radius={radius}
+                />
+                <History
+                  history={history}
+                  renderHistory={renderHistory}
+                  currentUser={currentUser}
+                  userId={userId}
+                />
+              </div>
+              <div className={classes.sixty}>
+                <HospitalList
+                  hospitals={hospitals}
+                  historyData={historyData}
+                  currentUser={currentUser}
+                  signInStatus={signInStatus}
+                />
+              </div>
             </div>
-            <div className={classes.sixty}>
-              <HospitalList
-                hospitals={hospitals}
-                historyData={historyData}
-                currentUser={currentUser}
-                signInStatus={signInStatus}
-              />
-            </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
-    </div>
+    </ApolloProvider>
   );
 };
 
