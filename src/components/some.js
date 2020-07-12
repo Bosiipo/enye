@@ -18,6 +18,37 @@ const {
     GraphQLBoolean,
     } = graphql;   
 
+    // interface Results {
+//   id: string;
+//   // name: string;
+//   // rating: string;
+//   // vicinity: string;
+// }
+
+// type Users_history = {
+//   // [x: string]: any;
+//   id: string;
+//   radius: string;
+//   type: string;
+//   results: [Results];
+// };
+
+// const HISTORY = gql`
+//   query getUsersHistory($id: ID) {
+//     users_history(id: $id) {
+//       id
+//       radius
+//       type
+//       results {
+//         id
+//         name
+//         rating
+//         vicinity
+//       }
+//     }
+//   }
+// `;
+
 const User = new GraphQLObjectType({
     name: 'User',
     fields: () => ({

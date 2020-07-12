@@ -54,7 +54,7 @@ const Query = new GraphQLObjectType({
       type: GraphQLList(Search),
       args: { id: { type: GraphQLID } },
       resolve(parent: any, args: any) {
-        console.log(args.id);
+        // console.log(args.id);
         return database
           .collection("history")
           .where("user_id", "==", args.id)
@@ -81,69 +81,20 @@ module.exports = new GraphQLSchema({
   query: Query,
 });
 
+// CORRECT
 // database
-//           .collection("users")
-// .where("user_id", "==", )
-//           .get()
-//           .then((querySnapshot: any[]) => {
-//             let users: any[] = [];
-//             querySnapshot.forEach((doc: { data: () => any }) => {
-//               let user = doc.data();
-//               users.push({
-//                 email: user.email,
-//                 user_id: user.user_id,
-//                 history: user.history,
-//               });
-//             });
-//             return users;
-//           })
-//           .catch((e: any) => console.log(e));
-
-// database
-//   .collection("history")
-//   .where("user_id", "==", args.id)
+//   .collection("users")
 //   .get()
 //   .then((querySnapshot: any[]) => {
-//     let history: any[] = [];
+//     let users: any[] = [];
 //     querySnapshot.forEach((doc: { data: () => any }) => {
 //       let user = doc.data();
-//       history.push({
-//         radius: user.email,
-//         type: user.user_id,
+//       users.push({
+//         email: user.email,
+//         user_id: user.user_id,
+//         history: user.history,
 //       });
 //     });
-//     return history;
+//     return users;
 //   })
 //   .catch((e: any) => console.log(e));
-
-// CORRECT
-database
-  .collection("users")
-  .get()
-  .then((querySnapshot: any[]) => {
-    let users: any[] = [];
-    querySnapshot.forEach((doc: { data: () => any }) => {
-      let user = doc.data();
-      users.push({
-        email: user.email,
-        user_id: user.user_id,
-        history: user.history,
-      });
-    });
-    return users;
-  })
-  .catch((e: any) => console.log(e));
-
-// database
-//           .collection("users")
-//           .where("user_id", "==", args.id)
-//           .get()
-//           .then((querySnapshot: { docs: any[] }) => {
-//             querySnapshot.docs.forEach((doc: { id: any; data: () => any }) => {
-//               console.log(doc.data());
-//             });
-//             return archive;
-//           })
-//           .catch((error: any) => {
-//             console.log("Error getting documents: ", error);
-//           });
